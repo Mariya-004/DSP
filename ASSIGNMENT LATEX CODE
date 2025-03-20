@@ -1,0 +1,270 @@
+\documentclass[a4paper,12pt]{report}
+\usepackage[left=1.1in, right=1.1in, top=1in, bottom=1.18in]{geometry}
+\usepackage{amsmath}
+\usepackage{enumerate}
+\usepackage{enumitem}
+\usepackage{latexsym}
+\tolerance=1
+\emergencystretch=\maxdimen
+\hyphenpenalty=10000
+\hbadness=10000
+
+\usepackage{fancyhdr}
+
+\usepackage{setspace}
+%\usepackage{epsfig}
+
+\usepackage{tocloft}
+
+\usepackage[pdftex]{graphicx}
+\thispagestyle{empty}
+\onehalfspacing
+
+%%Front Page
+\begin{document}
+	\begin{center}
+		\vspace{12pt}
+		\Large\textbf{M.Sc.}
+		\Large\textbf{(Five Year Integrated) in}
+		\Large{Computer Science  (Artificial Intelligence \& Data Science)\\}
+		\vspace{30pt}
+		\Large\textbf{Fourth Semester}
+		\vspace*{25pt}
+		\textbf{\\Assignment}
+		\vspace{5pt}
+		
+		\Large\textbf{23-813-0403: DIGITAL SIGNAL PROCESSING
+ \\ }
+		\vspace*{40pt}
+		\small\textit{\textbf{Submitted in partial fulfillment\\ of the requirements for the award of degree in \\ Master of Science (Five Year Integrated)\\in Computer Science (Artificial Intelligence \& Data Science) of \\ Cochin University of Science and Technology (CUSAT) \\ Kochi\\ }}
+		\vspace*{10pt}
+		\begin{center}
+		\includegraphics[scale=0.5]{cusat.png}	
+		\end{center}
+		
+		\vspace*{0pt}
+		\begin{center}
+		\textbf{\textit{Submitted by\hspace{350pt}}}
+		\end{center}
+
+%%Type your name and Reg No here
+
+		\textbf{MARIYA JYOTHY\hspace{300pt}}
+		\vspace*{20pt}
+		\textbf{(81323014) \hspace{300pt}}
+		\vspace*{0pt}
+		\small\textbf{DEPARTMENT OF COMPUTER SCIENCE\\}
+		\small\textbf{COCHIN UNIVERSITY OF SCIENCE AND TECHNOLOGY (CUSAT)\\}
+		\small\textbf{KOCHI-682022\\}
+		\vspace{10pt}
+		\small\textbf{MARCH 2025}
+		
+		
+		
+	\end{center}
+	\newpage
+	\thispagestyle{empty}
+	
+
+\setcounter{secnumdepth}{3}  % This sets the depth of numbering for sections and subsections
+\renewcommand{\thesection}{\arabic{section}}  % This sets the numbering format for sections
+\newpage
+\tableofcontents
+\newpage
+
+
+
+\newpage
+\section{Parseval's Theorem (Energy Conservation Law)}
+
+\normalsize
+Parseval’s theorem states that the total energy (sum of squared magnitudes) of a signal in the spatial domain is equal to the total energy of the signal in the frequency domain. In mathematical terms, for an image \( f(x, y) \) and its 2D Fourier Transform \( F(u, v) \), the theorem can be written as:
+\begin{equation}
+    \sum_{x,y} |f(x, y)|^2 = \frac{1}{M \cdot N} \sum_{u,v} |F(u, v)|^2
+\end{equation}
+where:
+\begin{itemize}
+    \item \( f(x, y) \) is the image in the spatial domain.
+    \item \( F(u, v) \) is the Fourier Transform of the image.
+    \item \( M \) and \( N \) are the dimensions of the image (height and width).
+    \item \( |f(x, y)|^2 \) represents the squared magnitude of the image pixel values.
+    \item \( |F(u, v)|^2 \) represents the squared magnitude of the Fourier transform coefficients.
+\end{itemize}
+
+This equation shows that the total energy (sum of squared magnitudes) in the spatial domain is equal to the energy in the frequency domain, confirming the energy conservation law for Fourier Transforms.
+
+
+
+\\ \\
+
+\begin{flushleft}
+\subsection{CODE}\\ \\
+\end{flushleft}
+\begin{verbatim}
+from google.colab import files
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.fft import fft2, fftshift
+import matplotlib.image as mpimg
+
+# Upload image
+uploaded = files.upload()
+
+# Assuming you upload a file named 'test.png', use the uploaded file name
+image_path = list(uploaded.keys())[0]  # Get the first uploaded file name
+
+# Load the image (if it's a color image, it will be converted to grayscale)
+img = mpimg.imread(image_path)
+# If the image is colored (e.g., RGB), convert it to grayscale
+if img.ndim == 3:
+    img = np.mean(img, axis=-1)  # Convert to grayscale by averaging the channels
+
+# Compute 2D Fourier Transform (Frequency domain)
+F_uv = fft2(img)
+
+# Shift the zero-frequency component to the center
+F_uv_shifted = fftshift(F_uv)
+
+# Calculate energy in the spatial domain
+energy_spatial = np.sum(np.abs(img)**2)
+
+# Calculate energy in the frequency domain
+energy_frequency = np.sum(np.abs(F_uv_shifted)**2) / img.size
+
+# Print the results
+print(f"Energy in spatial domain: {energy_spatial}")
+print(f"Energy in frequency domain: {energy_frequency}")
+
+# Verify Parseval's theorem (energy conservation)
+assert np.isclose(energy_spatial, energy_frequency),
+"Energy conservation does not hold!"
+
+# Optionally, visualize the image and its frequency domain representation
+plt.figure(figsize=(10, 5))
+
+plt.subplot(1, 2, 1)
+plt.imshow(img, cmap='gray')
+plt.title('Original Image')
+
+plt.subplot(1, 2, 2)
+# Visualize the log of the absolute value of the shifted frequency domain
+#Log scale for better visualization
+plt.imshow(np.log(np.abs(F_uv_shifted) + 1), cmap='gray')  
+plt.title('Frequency Domain')
+
+plt.show()
+\end{verbatim}
+\begin{flushleft}
+\subsection{RESULTS}\\ 
+\end{flushleft}
+\newline
+\includegraphics[scale=0.55]{EnergyConservation.png}
+\
+\begin{flushleft}
+\subsection{CONCLUSION}\\ \\
+\end{flushleft}
+\begin{itemize}
+    \item \textbf{Energy in the spatial domain:} Represents the total energy of the image (sum of pixel intensities squared).
+    \item \textbf{Energy in the frequency domain:} Represents the total energy after transforming the image to the frequency domain and summing the squared magnitudes of the Fourier coefficients.
+    \item \textbf{Verification:} If the assertion doesn't raise an error, the energy conservation law is satisfied.
+\end{itemize}
+\newpage
+
+\section{Magnitude Spectrum Analysis}
+
+\normalsize
+The magnitude spectrum is a critical component of Fourier Transform analysis, representing the intensity of different frequency components of an image. By applying the 2D Fourier Transform to an image, we can observe the distribution of frequency components in both normal and centered frequency domains. The normal frequency spectrum places the zero-frequency component at the top-left corner, while the centered frequency spectrum shifts the zero-frequency component to the center of the image. In this analysis, a logarithmic scale is applied to the magnitude spectrum to enhance the visibility of both low and high-frequency components.
+
+\begin{equation}
+    \text{Magnitude Spectrum} = |F(u, v)|
+\end{equation}
+
+where:
+\begin{itemize}
+    \item \( F(u, v) \) is the Fourier Transform of the image.
+    \item \( |F(u, v)| \) represents the magnitude of the Fourier Transform coefficients, capturing the intensity of different frequency components.
+\end{itemize}
+
+This analysis allows us to visually explore the frequency characteristics of the image by examining both the normal and centered magnitude spectrums.
+
+\\ \\
+
+\begin{flushleft}
+\subsection{CODE}\\ \\
+\end{flushleft}
+\begin{verbatim}
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.fft import fft2, fftshift
+import matplotlib.image as mpimg
+from google.colab import files
+
+# Upload image
+uploaded = files.upload()
+
+# Assuming you upload a file named 'test.png', use the uploaded file name
+image_path = list(uploaded.keys())[0]  # Get the first uploaded file name
+
+# Load the image
+img = mpimg.imread(image_path)
+
+# If the image is colored (e.g., RGB), convert it to grayscale
+if img.ndim == 3:
+    img = np.mean(img, axis=-1)  # Convert to grayscale by averaging the channels
+
+# Compute 2D Fourier Transform (Frequency domain)
+F_uv = fft2(img)
+
+# Compute magnitude spectrum (normal frequency rectangle, no shift)
+magnitude_spectrum_normal = np.abs(F_uv)
+
+# Compute magnitude spectrum (centered frequency rectangle,
+shift zero-frequency component)
+F_uv_shifted = fftshift(F_uv)
+magnitude_spectrum_centered = np.abs(F_uv_shifted)
+
+# Plot both the magnitude spectrums
+plt.figure(figsize=(12, 6))
+
+# Plot the normal (uncentered) frequency spectrum
+plt.subplot(1, 2, 1)
+# Log scale for better visualization
+plt.imshow(np.log(magnitude_spectrum_normal + 1), cmap='gray')  
+plt.title('Normal Frequency Magnitude Spectrum')
+plt.colorbar()
+
+# Plot the centered frequency spectrum
+plt.subplot(1, 2, 2)
+# Log scale for better visualization
+plt.imshow(np.log(magnitude_spectrum_centered + 1), cmap='gray')  
+plt.title('Centered Frequency Magnitude Spectrum')
+plt.colorbar()
+
+plt.tight_layout()
+plt.show()
+\end{verbatim}
+
+\begin{flushleft}
+\subsection{RESULTS}\\ 
+\end{flushleft}
+\newline
+\includegraphics[scale=0.40]{magnitudeSpectrum.png}
+\\
+
+\begin{flushleft}
+\subsection{CONCLUSION}\\ \\
+\end{flushleft}
+\begin{itemize}
+    \item \textbf{Magnitude Spectrum Normal:} Represents the frequency components of the image with the zero-frequency component at the top-left corner of the image.
+    \item \textbf{Magnitude Spectrum Centered:} Represents the frequency components with the zero-frequency component shifted to the center of the image.
+    \item \textbf{Logarithmic Scaling:} Used to enhance the visibility of both low and high-frequency components in the spectrum.
+    \item \textbf{Visualization:} By comparing both frequency spectrums, we can analyze the frequency distribution and the image's overall frequency characteristics.
+\end{itemize}
+
+
+
+	
+
+
+		
+\end{document}
