@@ -1,0 +1,44 @@
+Yes, your code is implementing the **Parseval's Theorem** for energy conservation in the context of Fourier Transforms. 
+
+### Parseval's Theorem (Energy Conservation Law):
+Parseval’s theorem states that the total energy (sum of squared magnitudes) of a signal in the spatial domain is equal to the total energy of the signal in the frequency domain. In mathematical terms, for an image \( f(x, y) \) and its 2D Fourier Transform \( F(u, v) \), the theorem can be written as:
+
+\[
+\sum_{x,y} |f(x, y)|^2 = \frac{1}{M \cdot N} \sum_{u,v} |F(u, v)|^2
+\]
+
+Where:
+- \( f(x, y) \) is the image in the spatial domain.
+- \( F(u, v) \) is the Fourier Transform of the image.
+- \( M \) and \( N \) are the dimensions of the image (height and width).
+- \( |f(x, y)|^2 \) represents the squared magnitude of the image pixel values.
+- \( |F(u, v)|^2 \) represents the squared magnitude of the Fourier transform coefficients.
+
+### What your code does:
+
+1. **Spatial Domain Energy**: 
+   You compute the energy in the spatial domain by summing the squared absolute values of the pixel intensities:
+   ```python
+   energy_spatial = np.sum(np.abs(img)**2)
+   ```
+
+2. **Frequency Domain Energy**: 
+   You compute the energy in the frequency domain by summing the squared magnitudes of the Fourier Transform coefficients. After computing the Fourier Transform with `fft2()`, you use `fftshift()` to center the zero-frequency component. The energy in the frequency domain is calculated as:
+   ```python
+   energy_frequency = np.sum(np.abs(F_uv_shifted)**2) / img.size
+   ```
+
+3. **Energy Conservation Check**: 
+   Finally, you check if the energy in both domains is approximately equal using:
+   ```python
+   assert np.isclose(energy_spatial, energy_frequency), "Energy conservation does not hold!"
+   ```
+
+   This assertion ensures that the energy conservation law holds, meaning the energy in the spatial domain should equal the energy in the frequency domain, as stated by Parseval's theorem.
+
+### Output and Conclusion:
+- **Energy in the spatial domain**: Represents the total energy of the image (sum of pixel intensities squared).
+- **Energy in the frequency domain**: Represents the total energy after transforming the image to the frequency domain and summing the squared magnitudes of the Fourier coefficients.
+- **Verification**: If the assertion doesn't raise an error, the energy conservation law is satisfied.
+
+So yes, this code is a demonstration of **Parseval's Energy Conservation Law** in the context of the 2D Fourier Transform. If the assertion passes, it shows that the energy in both the spatial and frequency domains is equivalent, as expected by Parseval’s theorem.
